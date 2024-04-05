@@ -30,3 +30,4 @@ C:\Users\Yama3o\source\repos\GetUrlsAPI\GetUrlsAPI\obj\Debug\net8.0\refint\GetUr
 C:\Users\Yama3o\source\repos\GetUrlsAPI\GetUrlsAPI\obj\Debug\net8.0\GetUrlsAPI.pdb
 C:\Users\Yama3o\source\repos\GetUrlsAPI\GetUrlsAPI\obj\Debug\net8.0\GetUrlsAPI.genruntimeconfig.cache
 C:\Users\Yama3o\source\repos\GetUrlsAPI\GetUrlsAPI\obj\Debug\net8.0\ref\GetUrlsAPI.dll
+C:\Users\Yama3o\source\repos\GetUrlsAPI\GetUrlsAPI\obj\Debug\net8.0\GetUrlsAPI.sourcelink.json

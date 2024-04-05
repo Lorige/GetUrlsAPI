@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GetUrlsAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dc3c1b5c15cfab6d1010c0888d0d97451b722b05")]
 [assembly: System.Reflection.AssemblyProductAttribute("GetUrlsAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GetUrlsAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
