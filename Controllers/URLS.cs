@@ -2,6 +2,8 @@
 using GetUrlsAPI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using System.Net;
+using System.Text.RegularExpressions;
 
 namespace GetUrlsAPI.Controllers
 {
@@ -9,15 +11,10 @@ namespace GetUrlsAPI.Controllers
     [ApiController]
     public class URLS : ControllerBase, IUrlGet
     {
-        List<string?> ListUrls { get; set; }
-        public URLS()
-        {
-            ListUrls = new List<string?>();
-        }
-
+        List<string> ListUrls { get; set; }
         public string? GetUrls(string url)
         {
-            ListUrls = new List<string?>();
+            ListUrls = new List<string>() { url };
             try
             {
                 Task.Run(() => AllUrlsGet(url)).Wait();
@@ -32,60 +29,31 @@ namespace GetUrlsAPI.Controllers
         {
             if (!ValidateUrl(url))
                 throw new Exception("Invalid URL");
-            using var client = new HttpClient();
-            using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
-            using HttpResponseMessage response = await client.SendAsync(request);
-            var readStream = response.Content.ReadAsStreamAsync().Result;
-            var streamReader = new StreamReader(readStream);
-            while (!streamReader.EndOfStream)
+            try
             {
-                var a = streamReader.ReadLine();
-                Substring(a);
-            }
-        }
-        private void Substring(string? str)
-        {
-            var strRemove = str;
-            while (true && !string.IsNullOrEmpty(strRemove))
-            {
-                if (strRemove.Contains("http://"))
+                var client = new HttpClient();
+                using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
+                using HttpResponseMessage response = await client.SendAsync(request);
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    strRemove = GetString(strRemove, "http://");
-                }
-                else if (strRemove.Contains("https://"))
-                {
-                    strRemove = GetString(strRemove, "https://");
-                }
-                else
-                    break;
-            }
-        }
+                    using StreamReader streamHtml = new StreamReader(response.Content.ReadAsStream());
+                    var html = streamHtml.ReadToEnd();
+                    MatchCollection matches = Regex.Matches(html, @"(?<=<a\s+(?:[^>]*?\s+)?href=""([^"">]*)"")[^>]*>([^<]*)<>", RegexOptions.IgnoreCase);
 
-        private string GetString(string strBody, string subStringIndexOf)
-        {
-            var startIndexUrl = strBody.IndexOf(subStringIndexOf);
-            var endIndexUrl = GetMinimumIndex(strBody, startIndexUrl + subStringIndexOf.Length);
-            var subString = strBody.Substring(startIndexUrl, endIndexUrl - startIndexUrl);
-            if (!ListUrls.Contains(subString) && subString.Length > 10 &&
-                (('A' <= subString[subStringIndexOf.Length] & subString[subStringIndexOf.Length] <= 'Z') ||
-                ('a' <= subString[subStringIndexOf.Length] & subString[subStringIndexOf.Length] <= 'z'))
-                )
+                    foreach (Match match in matches)
+                    {
+                        string href = match.Groups[1].Value;
+                        string text = match.Groups[2].Value;
+                        if (href.StartsWith("/") || href.StartsWith("http://" + url.Split('/')[1]) || href.StartsWith("https://" + url.Split('/')[1]))
+                        {
+                            ListUrls.Add(href);
+                        }
+                    }
+                }
+            } catch (HttpRequestException ex)
             {
-                ListUrls.Add(subString);
+                Console.WriteLine(ex.ToString());
             }
-            var strRemove = strBody.Remove(startIndexUrl, endIndexUrl - startIndexUrl);
-            return strRemove;
-        }
-
-        private int GetMinimumIndex(string str, int startIndex)
-        {
-            int[] index = [str.IndexOf(')', startIndex), str.IndexOf('\'', startIndex),
-            str.IndexOf('"', startIndex), str.IndexOf('/', startIndex), str.IndexOf('?', startIndex)];
-            var currentMinIndex = index.Max();
-            foreach (var ind in index)
-                if (ind > startIndex && ind < currentMinIndex && ind > 0)
-                    currentMinIndex = ind;
-            return currentMinIndex;
         }
 
         public bool ValidateUrl(string url)

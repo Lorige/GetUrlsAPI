@@ -14,7 +14,7 @@ internal class Program
         app.Run(async(context) => 
         { 
             var IUrlGet = app.Services.GetService<IUrlGet>();
-            await context.Response.WriteAsync($"Urls: {IUrlGet?.GetUrls("https://ya.ru")}");
+            await context.Response.WriteAsync($"Urls: {IUrlGet?.GetUrls("https://yandex.ru/images")}");
         });
         app.Run();
     }
