@@ -1,21 +1,19 @@
 using GetUrlsAPI.Controllers;
 using GetUrlsAPI;
 using System;
+using Microsoft.AspNetCore.Builder;
 
 internal class Program
 {
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder();
-        builder.Services.AddMvc();
-        builder.Services.AddSingleton<IUrlGet, URLS>();
 
+        builder.Services.AddScoped<IUrlGet, URLS>();
         var app = builder.Build();
-        app.Run(async(context) => 
-        { 
-            var IUrlGet = app.Services.GetService<IUrlGet>();
-            await context.Response.WriteAsync($"Urls: {IUrlGet?.GetUrls("https://yandex.ru/images")}");
-        });
+        app.Map("/", () => "Index Page");
+
+        app.UseMiddleware<GetAllUrlsMiddleware>();
         app.Run();
     }
 }
