@@ -15,9 +15,6 @@ internal class Program
         builder.Services.AddHttpClient();
         var app = builder.Build();
 
-        //using IHost host = builder.Build();
-
-
         app.Map("/", () => "Index Page");
 
         app.UseMiddleware<GetAllUrlsMiddleware>();
