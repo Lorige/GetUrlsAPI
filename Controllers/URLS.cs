@@ -4,13 +4,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using System.Net;
 using System.Text.RegularExpressions;
+using static Program;
+using System.Net.Http;
 
 namespace GetUrlsAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class URLS : ControllerBase, IUrlGet
+    public class URLS(IHttpClientFactory httpClientFactory) : ControllerBase, IUrlGet
     {
+        public IHttpClientFactory HttpClientFactory { get; } = httpClientFactory;
+
         public string Urls(string url)
         {
             return Task.Run(async() => await AllUrlsGet(url)).Result;
@@ -21,7 +25,7 @@ namespace GetUrlsAPI.Controllers
             try
             {
                 var htmlUrls = "";
-                using var client = new HttpClient();
+                HttpClient client = HttpClientFactory.CreateClient();
                 using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
                 using HttpResponseMessage response = await client.SendAsync(request);
                 if (response.StatusCode == HttpStatusCode.OK)
