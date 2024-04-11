@@ -8,7 +8,7 @@ namespace GetUrlsAPI
 {
     public interface IUrlGet
     {
-        string Urls(string url);
+        Task<string> GetUrlsFromHtml(string url);
     }
 
     public class GetAllUrlsMiddleware
@@ -26,7 +26,7 @@ namespace GetUrlsAPI
                 counter++;
                 httpContext.Response.ContentType = "text/html;charset=utf-8";
                 await httpContext.Response.WriteAsync($"Запрос {counter}; " +
-                    $"Counter: {urlGet.Urls(path).Replace(' ', '\n')}");
+                    $"Counter: {await urlGet.GetUrlsFromHtml(path)}");
             }
             else
                 await next.Invoke(httpContext);

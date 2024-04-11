@@ -1,11 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using GetUrlsAPI;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.RegularExpressions;
-using static Program;
-using System.Net.Http;
 
 namespace GetUrlsAPI.Controllers
 {
@@ -14,13 +9,9 @@ namespace GetUrlsAPI.Controllers
     public class URLS(IHttpClientFactory httpClientFactory) : ControllerBase, IUrlGet
     {
         public IHttpClientFactory HttpClientFactory { get; } = httpClientFactory;
-
-        public string Urls(string url)
-        {
-            return Task.Run(async() => await AllUrlsGet(url)).Result;
-        }
-
-        async Task<string> AllUrlsGet(string url)
+        
+        [HttpGet]
+        public async Task<string> GetUrlsFromHtml(string url)
         {
             try
             {
